@@ -66,12 +66,19 @@ extern "C"
 
     // Enable libtashkeel for Arabic
     if (voice->phonemizeConfig.eSpeak.voice == "ar") {
+    spdlog::debug("Initialize libtashkeel...");
       config->useTashkeel = true;
       // Assume next to piper executable
       config->tashkeelModelPath =
         std::filesystem::absolute(
-          exePath.parent_path().append("libtashkeel_model.ort"))
+          config->dllPath.append("\\libtashkeel_model.ort"))
         .string();
+    spdlog::debug("Loading libtashkeel model from {}",
+                  config->tashkeelModelPath.value());
+    config->tashkeelState = std::make_unique<tashkeel::State>();
+    tashkeel::tashkeel_load(config->tashkeelModelPath.value(),
+                            *config->tashkeelState);
+    spdlog::debug("Initialized libtashkeel");
     }
   }
 

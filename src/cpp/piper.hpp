@@ -26,6 +26,7 @@ struct eSpeakConfig {
 };
 
 struct PiperConfig {
+  std::string dllPath;
   std::string eSpeakDataPath;
   bool useESpeak = true;
 

@@ -26,8 +26,9 @@ extern "C" {
 	PIPER_API void setLogLevel(int logLevel);
 
 	/* Working with structs functions */
-	PIPER_API PiperConfig* createPiperConfig(char* eSpeakDataPath) {
+	PIPER_API PiperConfig* createPiperConfig(char* eSpeakDataPath, char* dllPath) {
 		auto config = new PiperConfig();
+		config->dllPath = dllPath;
 		config->eSpeakDataPath = eSpeakDataPath;
 		return config;
 	}
