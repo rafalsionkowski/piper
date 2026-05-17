@@ -46,7 +46,19 @@ RUN mkdir -p piper && \
 
 # -----------------------------------------------------------------------------
 
-FROM scratch
+FROM debian:bullseye-slim
 
-# COPY --from=test /test/piper_*.tar.gz /test/test.wav ./
+RUN apt-get update && \
+    apt-get install --yes --no-install-recommends \
+        ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
 COPY --from=build /dist/piper_*.tar.gz ./
+RUN tar -xzf piper_*.tar.gz --strip-components=1 && \
+    rm -f piper_*.tar.gz
+
+ENV LD_LIBRARY_PATH=/app
+
+ENTRYPOINT ["/app/piper"]
