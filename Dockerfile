@@ -50,8 +50,12 @@ FROM debian:bullseye-slim
 
 RUN apt-get update && \
     apt-get install --yes --no-install-recommends \
-        ca-certificates && \
+        ca-certificates curl \
+        python3 python3-pip && \
     rm -rf /var/lib/apt/lists/*
+
+# Python HTTP wrapper dependencies
+RUN pip3 install --no-cache-dir fastapi uvicorn[standard]
 
 WORKDIR /app
 
@@ -59,6 +63,37 @@ COPY --from=build /dist/piper_*.tar.gz ./
 RUN tar -xzf piper_*.tar.gz --strip-components=1 && \
     rm -f piper_*.tar.gz
 
-ENV LD_LIBRARY_PATH=/app
+# Pobierz modele głosowe ONNX dla en/de/fr/es
+# Źródło: https://huggingface.co/rhasspy/piper-voices
+RUN mkdir -p /app/models
 
-ENTRYPOINT ["/app/piper"]
+RUN curl -fsSL -o /app/models/en_US-lessac-medium.onnx \
+        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/medium/en_US-lessac-medium.onnx" && \
+    curl -fsSL -o /app/models/en_US-lessac-medium.onnx.json \
+        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json"
+
+RUN curl -fsSL -o /app/models/de_DE-thorsten-medium.onnx \
+        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/de/de_DE/thorsten/medium/de_DE-thorsten-medium.onnx" && \
+    curl -fsSL -o /app/models/de_DE-thorsten-medium.onnx.json \
+        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/de/de_DE/thorsten/medium/de_DE-thorsten-medium.onnx.json"
+
+RUN curl -fsSL -o /app/models/fr_FR-siwis-medium.onnx \
+        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/fr/fr_FR/siwis/medium/fr_FR-siwis-medium.onnx" && \
+    curl -fsSL -o /app/models/fr_FR-siwis-medium.onnx.json \
+        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/fr/fr_FR/siwis/medium/fr_FR-siwis-medium.onnx.json"
+
+RUN curl -fsSL -o /app/models/es_ES-davefx-medium.onnx \
+        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/es/es_ES/davefx/medium/es_ES-davefx-medium.onnx" && \
+    curl -fsSL -o /app/models/es_ES-davefx-medium.onnx.json \
+        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/es/es_ES/davefx/medium/es_ES-davefx-medium.onnx.json"
+
+# HTTP wrapper
+COPY server.py ./
+
+ENV LD_LIBRARY_PATH=/app
+ENV PIPER_BIN=/app/piper
+ENV MODELS_DIR=/app/models
+
+EXPOSE 8080
+
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8080"]
