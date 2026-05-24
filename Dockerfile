@@ -67,10 +67,10 @@ RUN tar -xzf piper_*.tar.gz --strip-components=1 && \
 # Źródło: https://huggingface.co/rhasspy/piper-voices
 RUN mkdir -p /app/models
 
-RUN curl -fsSL -o /app/models/en_US-lessac-medium.onnx \
-        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/medium/en_US-lessac-medium.onnx" && \
-    curl -fsSL -o /app/models/en_US-lessac-medium.onnx.json \
-        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/medium/en_US-lessac-medium.onnx.json"
+RUN curl -fsSL -o /app/models/en_US-amy-medium.onnx \
+        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/amy/medium/en_US-amy-medium.onnx" && \
+    curl -fsSL -o /app/models/en_US-amy-medium.onnx.json \
+        "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/amy/medium/en_US-amy-medium.onnx.json"
 
 RUN curl -fsSL -o /app/models/de_DE-thorsten-medium.onnx \
         "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/de/de_DE/thorsten/medium/de_DE-thorsten-medium.onnx" && \

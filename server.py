@@ -24,7 +24,7 @@ MODELS_DIR = os.getenv("MODELS_DIR",  "/app/models")
 
 # Mapowanie język → nazwa modelu ONNX
 VOICE_MAP: dict[str, str] = {
-    "en": "en_US-lessac-medium",
+    "en": "en_US-amy-medium",
     "de": "de_DE-thorsten-medium",
     "fr": "fr_FR-siwis-medium",
     "es": "es_ES-davefx-medium",
